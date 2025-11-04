@@ -1,11 +1,11 @@
 '''
 to do:
 readme
-create alternatives for all the other currencies
-do more try/except
-figure out what's wrong w to_or_from
-loop what happens when file_not_found_error
+in line comments
+fix whatever is happening with initial input
+
 '''
+import datetime
 
 convert_to_other_currencies = {
     "Euro": 0.87,
@@ -29,58 +29,100 @@ convert_from_other_currencies = {
     "Indian rupee": 0.011
 }
 
-view_options = ["view", "view purchases", "view past purchases", "view my purchases"]
-convert_to_options = ["convert to another currency", "to other currency", "to another currency", "convert to other currency", "convert dollars to another currency", "convert from dollars to another currency", "convert from dollars to other currency"]
-convert_from_options = ["convert from another currency", "from other currency", "from another currency", "convert from other currency", "convert to dollars from another currency", "convert to dollars from other currency"]
-exit_options = ["exit", "quit", "to exit", "exiting", "e"]
-    
 def calculations(to_or_from):
+    currency_options = ['euro', 'euros', 'yen', 'yens', 'japanese yen', 'japanese yens', 'pounds', 'british pounds', 'pound', 'british pound', 'pound sterling', 'cad', 'canadian dollar', 'canadian dollars', 'peso', 'pesos', 'mexican pesos', 'mexican peso', 'chinese yuan', 'chinese yen', 'chinese yuans', 'chinese yens', 'yuans', 'rands', 'sad', 'rand', 'south african rand', 'south african rands', 'rupees', 'rupee', 'ruppee', 'ruppees', 'indian rupee', 'indian rupees']
+    
     if to_or_from == "convert to":
-        currency_name = input("What is currency you would like to convert to? ")
+        currency_name = input("What is currency you would like to convert to? ")     
+        initial_value = input("What is the original cost? (In dollars) ")
         if currency_name.lower in ['euro', 'euros']:
             currency_name = "Euro"
-        elif currency_name.lower in ['yen', 'yens', 'japanese yen', 'japanese yens', 'japanese', 'japan']:
+        elif currency_name.lower in ['yen', 'yens', 'japanese yen', 'japanese yens']:
             currency_name = "Japanese yen"
-        #do the same for all the other currencies        
-        initial_value = input("What is the original cost? (In dollars) ")
+        elif currency_name.lower in ['pounds', 'british pounds', 'pound', 'british pound', 'pound sterling']:
+            currency_name = "Pound sterling"
+        elif currency_name.lower in ['cad', 'canadian dollar', 'canadian dollars']:
+            currency_name = "Canadian dollar"
+        elif currency_name.lower in ['peso', 'pesos', 'mexican pesos', 'mexican peso']:
+            currency_name = "Mexican peso"
+        elif currency_name.lower in ['chinese yuan', 'chinese yen', 'chinese yuans', 'chinese yens', 'yuans']:
+            currency_name = "Chinese yuan"    
+        elif currency_name.lower in ['rands', 'sad', 'rand', 'south african rand', 'south african rands']:
+            currency_name = "South African Rand"
+        elif currency_name.lower in ['rupees', 'rupee', 'ruppee', 'ruppees', 'indian rupee', 'indian rupees']:
+            currency_name = "Indian rupee"  
+        while currency_name.lower not in currency_options:
+            currency_name = input("Sorry, I didn't recognize that currency. Please try again. ")    
         currency_rate = convert_to_other_currencies[currency_name] 
     elif to_or_from == "convert from":    
         currency_name = input("What is currency you would like to convert from? ")
         initial_value = input("What is the original cost? (In another currency) ")
-        currency_rate = convert_from_other_currencies[currency_name]
+        if currency_name.lower in ['euro', 'euros']:
+            currency_name = "Euro"
+        elif currency_name.lower in ['yen', 'yens', 'japanese yen', 'japanese yens']:
+            currency_name = "Japanese yen"
+        elif currency_name.lower in ['pounds', 'british pounds', 'pound', 'british pound', 'pound sterling']:
+            currency_name = "Pound sterling"
+        elif currency_name.lower in ['cad', 'canadian dollar', 'canadian dollars']:
+            currency_name = "Canadian dollar"
+        elif currency_name.lower in ['peso', 'pesos', 'mexican pesos', 'mexican peso']:
+            currency_name = "Mexican peso"
+        elif currency_name.lower in ['chinese yuan', 'chinese yen', 'chinese yuans', 'chinese yens', 'yuans']:
+            currency_name = "Chinese yuan"    
+        elif currency_name.lower in ['rands', 'sad', 'rand', 'south african rand', 'south african rands']:
+            currency_name = "South African Rand"
+        elif currency_name.lower in ['rupees', 'rupee', 'ruppee', 'ruppees', 'indian rupee', 'indian rupees']:
+            currency_name = "Indian rupee"        
+        while currency_name.lower not in currency_options:
+            currency_name = input("Sorry, I didn't recognize that currency. Please try again. ")      
+        currency_rate = convert_from_other_currencies[currency_name]    
     final_currency = initial_value * currency_rate    
-    print(f"The final answer is {final_currency} {currency_name}.")
+    print(f"The final answer is {final_currency} in {currency_name}.")
 
-def saving_history():
+def saving_history(final_currency, currency_name):
     username = input("What is your username?")
+    filename = f"{username}.txt"
     try:
-        open('{username}.txt', 'x') 
+        file = open(filename, 'x') 
     except FileExistsError:
-        open('{username}.txt', 'a')    
+        file = open(filename, 'a')
+    x = datetime.datetime.now()  
+    todays_date = (x.strftime("%d/%m/%Y"))  
+    file.write(f"{todays_date} - {final_currency}, {currency_name}\n")       
+    file.close()     
 
-def show_history():
+def show_history(filename):
     try:
-        user_file = open('{username}.txt', 'r')
-        file_content = user_file.read()
-        print(file_content)
+        user_file = open(filename, 'r')
     except FileNotFoundError:
-        print("Sorry, I couldn't find anything under that username. Please try again.")
-        #loop it    
+        username = input("Sorry, I couldn't find anything under that username. Please try another. ") 
+        filename = f"{username}.txt"
+        user_file = open(filename, 'r')
+    file_content = user_file.read()
+    print(file_content)    
 
 
 def main():
+    view_options = ["view", "view purchases", "view past purchases", "view my purchases"]
+    convert_to_options = ["convert to another currency", "to other currency", "to another currency", "convert to other currency", "convert dollars to another currency", "convert from dollars to another currency", "convert from dollars to other currency"]
+    convert_from_options = ["convert from another currency", "from other currency", "from another currency", "convert from other currency", "convert to dollars from another currency", "convert to dollars from other currency"]
+    exit_options = ["exit", "quit", "to exit", "exiting", "e"]
+
     print("Hi, welcome to Katie's currency!")
     options = input("Would you like to view past purchases, convert dollars to another currency, convert to dollars from another currency, or exit the program? ")
     while options.lower not in exit_options:
         while options.lower not in view_options and options.lower not in convert_to_options and options.lower not in convert_from_options:
-            to_or_from = input("Sorry, I didn't catch that. Would you like to view past purchases, convert dollars to another currency, or convert from dollars to another currency?")
+            to_or_from = input("Sorry, I didn't catch that. Would you like to view past purchases, convert dollars to another currency, or convert from dollars to another currency? ")
         if options.lower in view_options:
             show_history()
         elif options.lower in convert_to_options:
             to_or_from = "convert to"
-            calculations()
+            calculations(to_or_from)
         elif options.lower in convert_from_options:      
             to_or_from = "convert from"
-            calculations()
+            calculations(to_or_from)
         saving_history()      
     print("Bye bye!")
+
+if __name__ == "__main__":
+    main()    
